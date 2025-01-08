@@ -3,16 +3,16 @@ services:
   api-getway:
     build: ./services/api-getway
     ports:
-      - "8080:8080"
+      - "3000:3000"
   video-service:
     build: ./services/video-service
     ports:
-      - "8081:8001"
+      - "3001:3001"
   auth-service:
     build: ./services/auth-service
     ports:
-      - "8002:8002"
+      - "3002:3002"
   metadata-service:
     build: ./services/metadata-service
     ports:
-      - "8003:8003"
+      - "3003:3003"
