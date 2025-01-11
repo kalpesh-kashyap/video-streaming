@@ -1,10 +1,13 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/joho/godotenv"
 	"github.com/kalpesh-kashyap/video-streaming/services/video-service/models"
 	"gorm.io/driver/postgres"
@@ -41,4 +44,14 @@ func MiggrateDb() {
 		log.Fatal("Failed to migrate database:", err)
 	}
 	fmt.Println("Database migration completed!")
+}
+
+func InitS3Client() *s3.Client {
+	region := os.Getenv("AWS_REGION")
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+	if err != nil {
+		log.Fatalf("unable to load SDK config, %v", err)
+	}
+
+	return s3.NewFromConfig(cfg)
 }
