@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 var s3Client *s3.Client
@@ -25,7 +25,6 @@ func UploadFileToS3(file *multipart.FileHeader, bucketName, fileName string) (st
 		contentType = file.Header["Content-Type"][0]
 	}
 
-	// Upload to S3
 	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(bucketName),
 		Key:         aws.String(fileName),
@@ -33,6 +32,7 @@ func UploadFileToS3(file *multipart.FileHeader, bucketName, fileName string) (st
 		ContentType: aws.String(contentType),
 		ACL:         types.ObjectCannedACLPublicRead,
 	})
+
 	if err != nil {
 		return "", fmt.Errorf("failed to upload file to S3: %w", err)
 	}

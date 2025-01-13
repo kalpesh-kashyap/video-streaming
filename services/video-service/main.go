@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/kalpesh-kashyap/video-streaming/services/video-service/config"
+	"github.com/kalpesh-kashyap/video-streaming/services/video-service/routes"
 )
 
 func main() {
@@ -17,6 +18,9 @@ func main() {
 
 	config.ConnectDb()
 	config.MiggrateDb()
+	config.InitS3Client()
+
+	routes.FileUploadRoutes(app)
 
 	app.Use(logger.New())
 	app.Use(cors.New())
