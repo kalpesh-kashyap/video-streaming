@@ -11,14 +11,19 @@ import (
 )
 
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		BodyLimit:         1024 * 1024 * 1024,
+		StreamRequestBody: true,
+	})
 
 	app.Use(logger.New())
 	app.Use(cors.New())
 
 	config.ConnectDb()
 	config.MiggrateDb()
-	config.InitS3Client()
+	if err := config.InitS3Client(); err != nil {
+		log.Fatalf("Failed to initialize S3 client: %v", err)
+	}
 
 	routes.FileUploadRoutes(app)
 
