@@ -12,21 +12,19 @@ import (
 )
 
 func UploadFile(c *fiber.Ctx) error {
+	fmt.Println("inside the upload handler")
 	var video models.Video
-	if err := c.BodyParser(&video); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to parse request body",
-		})
-	}
+	video.Title = c.FormValue("title")
+	video.Description = c.FormValue("description")
 	file, err := c.FormFile("video")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "failed to get file" + err.Error()})
 	}
 
-	fileName := fmt.Sprintf("/videos/%d-%s", time.Now().Unix(), file.Filename)
+	fileName := fmt.Sprintf("videos/%d-%s", time.Now().Unix(), file.Filename)
 	fileSize := file.Size
 
-	url, err := utils.UploadFileToS3(file, "", fileName)
+	url, err := utils.UploadFileToS3(file, "video-stream-go", fileName)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to uplaod file" + err.Error()})
 	}

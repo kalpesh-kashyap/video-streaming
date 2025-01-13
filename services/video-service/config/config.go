@@ -15,7 +15,7 @@ import (
 )
 
 var DB *gorm.DB
-var s3Client *s3.Client
+var S3Client *s3.Client
 
 func ConnectDb() {
 	err := godotenv.Load()
@@ -48,10 +48,11 @@ func MiggrateDb() {
 }
 
 func InitS3Client() error {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	var region = os.Getenv("AWS_REGION")
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
 		return fmt.Errorf("unable to load AWS SDK config: %w", err)
 	}
-	s3Client = s3.NewFromConfig(cfg)
+	S3Client = s3.NewFromConfig(cfg)
 	return nil
 }

@@ -6,6 +6,6 @@ import (
 )
 
 func FileUploadRoutes(c *fiber.App) {
-	video := c.Group("upload")
+	video := c.Group("/upload")
 	video.Post("/", handler.UploadFile)
 }
