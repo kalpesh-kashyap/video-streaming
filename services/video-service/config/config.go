@@ -8,6 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/joho/godotenv"
 	"github.com/kalpesh-kashyap/video-streaming/services/video-service/models"
 	"gorm.io/driver/postgres"
@@ -48,11 +49,26 @@ func MiggrateDb() {
 }
 
 func InitS3Client() error {
-	var region = os.Getenv("AWS_REGION")
+	// Get AWS region from environment variables
+	region := os.Getenv("AWS_REGION")
+	if region == "" {
+		return fmt.Errorf("AWS_REGION environment variable is not set")
+	}
+
+	// Load AWS configuration
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
 		return fmt.Errorf("unable to load AWS SDK config: %w", err)
 	}
-	S3Client = s3.NewFromConfig(cfg)
+
+	// Use an explicit endpoint for S3
+	customEndpoint := fmt.Sprintf("https://s3.%s.amazonaws.com", region)
+
+	// Initialize the S3 client with a custom endpoint
+	S3Client = s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.Region = region
+		o.BaseEndpoint = aws.String(customEndpoint)
+	})
+
 	return nil
 }

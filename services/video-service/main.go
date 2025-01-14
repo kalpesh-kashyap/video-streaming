@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,6 +15,8 @@ func main() {
 	app := fiber.New(fiber.Config{
 		BodyLimit:         1024 * 1024 * 1024,
 		StreamRequestBody: true,
+		ReadTimeout:       60 * time.Second,
+		WriteTimeout:      60 * time.Second,
 	})
 
 	app.Use(logger.New())
